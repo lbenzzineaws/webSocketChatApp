@@ -14,11 +14,11 @@ public class Message {
 
 	    public Message() {}
 
-	    public Message(String text, String  username , String type) {
+	    public Message(String text, String  username , String type, int onlineCount) {
 	        this.content = text;
 	        this.username = username;
 	        this.type = type;
-	        this.onlineCount+= 1;
+	        this.onlineCount = onlineCount;
 	        
 	    }
 
