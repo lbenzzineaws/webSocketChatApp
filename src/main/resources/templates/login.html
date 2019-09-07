@@ -152,12 +152,14 @@
     function login() {
         // TODO: complete the login function
         
-        var username = document.getElementById("username").value;
+        var user = document.getElementById("username").value;
+    
+    	console.log(user);
 		//var pass = document.getElementById("password").value;
-		if(username.length !== 0) {
+		if(user.length !== 0) {
     	//alert("Logged In");
     	
-    	window.location.href = "/index?username=" + username;
+    	window.location.href = "/index?username=" + user;
     	return false;
 		} else {
     	alert("Please enter a valid username");

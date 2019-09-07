@@ -91,6 +91,7 @@
             console.log('WebSocket Receives：%c' + event.data, 'color:green');
             //Receive Message from Server
             var message = JSON.parse(event.data) || {};
+            console.log(message);
             var $messageContainer = $('.message-container');
             if (message.type === 'SPEAK') {
                 $messageContainer.append(
@@ -98,8 +99,12 @@
                     '<div class="mdui-card-primary">' +
                     '<div class="mdui-card-content message-content">' + message.username + "：" + message.msg + '</div>' +
                     '</div></div>');
+                console.log(' we are getting here ' + message.username + ' and ' + message.msg);
+                console.log(' the message container has ' + $message.container);
             }
+         
             $('.chat-num').text(message.onlineCount);
+            console.log('Did you get here!!!');
             var $cards = $messageContainer.children('.mdui-card:visible').toArray();
             if ($cards.length > 5) {
                 $cards.forEach(function (item, index) {
@@ -132,6 +137,7 @@
      */
     function sendMsgToServer() {
         var $message = $('#msg');
+        console.log($('#username').text())
         if ($message.val()) {
             webSocket.send(JSON.stringify({username: $('#username').text(), msg: $message.val()}));
             $message.val(null);

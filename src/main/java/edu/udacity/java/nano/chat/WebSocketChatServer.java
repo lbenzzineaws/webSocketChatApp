@@ -4,8 +4,9 @@ package edu.udacity.java.nano.chat;
 
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
+
 import javax.websocket.*;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import java.io.IOException;
@@ -37,21 +38,20 @@ public class WebSocketChatServer {
     
     
     
-    private static void sendMessageToAll(Message msg) throws IOException {
+    private static void sendMessageToAll(String msg) throws IOException {
         //TODO: add send message method.
     	//Iterator osIterator = onlineSessions.entrySet().iterator(); 
     	
-    	for (Map.Entry<String,Session> entry:onlineSessions.entrySet()) {
-    		Session session = entry.getValue();
-    		try {
-    		session.getBasicRemote().sendText(msg.getContent());
-    		} catch (IOException e) {
+    	onlineSessions.forEach((id, session) -> {
+            try {
+                session.getBasicRemote().sendText(msg);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-    		
-    	}
-    	
+        });
     }
+    	
+    
 
 
 
@@ -65,16 +65,12 @@ public class WebSocketChatServer {
         //TODO: add on open connection.
     	this.session = session;
        
-    	logger.info("Open session:" + session.getId() + " and username :" );
-    	
+    	logger.info("Open session:" + session.getId());
     	onlineSessions.put(session.getId(), session);
-        Message message = new Message();
-        //message.setUsername();
-        message.setContent("Connected!");
-        logger.info("message sent is : " + message.getContent() + " and user is ");
-        sendMessageToAll(message);
     	
-    }
+        sendMessageToAll(Message.jsonStr(Message.ENTER, "", "", Integer.toString(onlineSessions.size())));
+        }
+
 
     /**
      * Send message, 1) get username and session, 2) send message to all.
@@ -88,14 +84,8 @@ public class WebSocketChatServer {
     	
     	//How to get username and from which object ???
     	
-    	
-    	
-    	Message message = new Message();
-        message.setUsername("test");
-        message.setContent(jsonStr);
-        message.setOnlineCount(message.getOnlineCount() + 1);
-        sendMessageToAll(message);
-    	
+    	Message message = JSON.parseObject(jsonStr, Message.class);
+        sendMessageToAll(Message.jsonStr(Message.SPEAK, message.getUsername(), message.getMsg(), Integer.toString(onlineSessions.size())));
     }
 
     /**
@@ -107,11 +97,8 @@ public class WebSocketChatServer {
     public void onClose(Session session) throws IOException, EncodeException {
         //TODO: add close connection.
     	//onlineSessions.remove(session.getId(), session);
-    	Message message = new Message();
-    	message.setContent("left");
-    	message.setOnlineCount(message.getOnlineCount() -1);
-    	sendMessageToAll(message);
-    	onlineSessions.remove(session.getId(), session);
+    	onlineSessions.remove(session.getId());
+        sendMessageToAll(Message.jsonStr(  Message.QUIT,"", "",Integer.toString(onlineSessions.size())));
     }
 
     /**
