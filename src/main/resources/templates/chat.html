@@ -36,10 +36,13 @@
                         <input class="mdui-textfield-input" id="msg"/>
                     </div>
                     <div class="mdui-container" style="padding:20px 35px">
-                        <!-- TODO: add a send button to send message -->
                         <button class="mdui-btn mdui-color-theme mdui-ripple"
-                                onclick="clearMsg()">Clear
+                                onclick="sendMsgToServer()">Send Message
+                                <span></span>
                         </button>
+                        <span>   </span>
+                        <button class="mdui-btn mdui-color-theme mdui-ripple"
+                                         onclick="clearMsg()">Clear</button>
                     </div>
                 </div>
             </div>
@@ -54,10 +57,14 @@
                 <div class="mdui-chip">
                     <span class="mdui-chip-icon mdui-color-blue">
                         <i class="mdui-icon material-icons">face</i></span>
-                    <span class="mdui-chip-title">Online Users</span>
-                    <!-- TODO: check online number num -->
+                    <span class="mdui-chip-title"><span class="chat-num"></span> Online Users</span>
+
+
                 </div>
-                <!-- TODO: add a message container -->
+
+                <div class="message-container">
+
+                </div>
             </div>
 
         </div>
@@ -91,7 +98,7 @@
             console.log('WebSocket Receives：%c' + event.data, 'color:green');
             //Receive Message from Server
             var message = JSON.parse(event.data) || {};
-            console.log(message);
+            
             var $messageContainer = $('.message-container');
             if (message.type === 'SPEAK') {
                 $messageContainer.append(
@@ -99,12 +106,11 @@
                     '<div class="mdui-card-primary">' +
                     '<div class="mdui-card-content message-content">' + message.username + "：" + message.msg + '</div>' +
                     '</div></div>');
-                console.log(' we are getting here ' + message.username + ' and ' + message.msg);
-                console.log(' the message container has ' + $message.container);
+                
             }
-         
+
             $('.chat-num').text(message.onlineCount);
-            console.log('Did you get here!!!');
+            
             var $cards = $messageContainer.children('.mdui-card:visible').toArray();
             if ($cards.length > 5) {
                 $cards.forEach(function (item, index) {
@@ -137,7 +143,6 @@
      */
     function sendMsgToServer() {
         var $message = $('#msg');
-        console.log($('#username').text())
         if ($message.val()) {
             webSocket.send(JSON.stringify({username: $('#username').text(), msg: $message.val()}));
             $message.val(null);
@@ -163,5 +168,3 @@
 
 </body>
 </html>
-
-
