@@ -23,6 +23,8 @@ public class Message {
         return JSON.toJSONString(new Message(type, username, msg, onlineTotal));
     }
 
+    public Message() {};
+    
     public Message(String type, String username, String msg, String onlineCount) {
         this.type = type;
         this.username = username;
